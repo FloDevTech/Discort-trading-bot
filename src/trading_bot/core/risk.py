@@ -48,6 +48,13 @@ class TradingPlan:
         total_cost = sum((phase.entry * phase.shares for phase in self.phases), Decimal("0"))
         return (total_cost / Decimal(self.total_shares)).quantize(PRICE_QUANT, rounding=ROUND_HALF_UP)
 
+    @property
+    def average_take_profit_price(self) -> Decimal:
+        return (self.weighted_average_entry + (self.total_risk * self.target_r)).quantize(
+            PRICE_QUANT,
+            rounding=ROUND_HALF_UP,
+        )
+
 
 def parse_decimal_list(raw: str, field_name: str) -> list[Decimal]:
     values = [item.strip() for item in raw.split(",") if item.strip()]
@@ -92,6 +99,8 @@ def build_trading_plan(
 
     calculated_phases: list[TradingPhase] = []
     cumulative_cost = Decimal("0")
+    cumulative_entry_cost = Decimal("0")
+    cumulative_risk = Decimal("0")
     cumulative_shares = 0
     for index, (entry, stop_margin, risk_percent) in enumerate(
         zip(entries, stop_margins, risk_percentages, strict=True),
@@ -110,13 +119,16 @@ def build_trading_plan(
         )
         shares = int((risk_amount / stop_margin).to_integral_value(rounding=ROUND_FLOOR))
         stop_price = (entry - stop_margin).quantize(PRICE_QUANT, rounding=ROUND_HALF_UP)
-        take_profit_price = (entry + (stop_margin * target_r)).quantize(
+        cumulative_cost += (entry + commission) * shares
+        cumulative_entry_cost += entry * shares
+        cumulative_risk += risk_amount
+        cumulative_shares += shares
+        breakeven_price = (cumulative_cost / Decimal(cumulative_shares)).quantize(
             PRICE_QUANT,
             rounding=ROUND_HALF_UP,
         )
-        cumulative_cost += (entry + commission) * shares
-        cumulative_shares += shares
-        breakeven_price = (cumulative_cost / Decimal(cumulative_shares)).quantize(
+        cumulative_average_entry = cumulative_entry_cost / Decimal(cumulative_shares)
+        take_profit_price = (cumulative_average_entry + (cumulative_risk * target_r)).quantize(
             PRICE_QUANT,
             rounding=ROUND_HALF_UP,
         )

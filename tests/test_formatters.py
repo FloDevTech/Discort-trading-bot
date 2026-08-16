@@ -1,6 +1,7 @@
 from unittest import TestCase
 
-from trading_bot.formatters import split_discord_message
+from trading_bot.core.risk import build_trading_plan_from_strings
+from trading_bot.formatters import format_plan_for_discord, split_discord_message
 
 
 class DiscordMessageSplitterTests(TestCase):
@@ -11,3 +12,19 @@ class DiscordMessageSplitterTests(TestCase):
 
         self.assertGreater(len(chunks), 1)
         self.assertTrue(all(len(chunk) <= 500 for chunk in chunks))
+
+
+class TradingPlanFormatterTests(TestCase):
+    def test_includes_average_take_profit_in_summary(self) -> None:
+        plan = build_trading_plan_from_strings(
+            phases_count=3,
+            total_risk="5",
+            target_r="3",
+            entries="0.52,0.53,0.54",
+            stop_margins="0.05,0.05,0.05",
+            risk_percentages="25,35,40",
+        )
+
+        message = format_plan_for_discord(plan)
+
+        self.assertIn("TP medio 3R: **$15.5315**", message)

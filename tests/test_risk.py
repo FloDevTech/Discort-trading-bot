@@ -21,9 +21,29 @@ class TradingPlanTests(TestCase):
         self.assertEqual([phase.shares for phase in plan.phases], [25, 35, 40])
         self.assertEqual([phase.stop_price for phase in plan.phases], [Decimal("0.4700"), Decimal("0.4800"), Decimal("0.4900")])
         self.assertEqual([phase.breakeven_price for phase in plan.phases], [Decimal("0.5200"), Decimal("0.5258"), Decimal("0.5315")])
-        self.assertEqual([phase.take_profit_price for phase in plan.phases], [Decimal("0.6700"), Decimal("0.6800"), Decimal("0.6900")])
+        self.assertEqual([phase.take_profit_price for phase in plan.phases], [Decimal("4.2700"), Decimal("9.5258"), Decimal("15.5315")])
         self.assertEqual(plan.total_shares, 100)
         self.assertEqual(plan.weighted_average_entry, Decimal("0.5315"))
+        self.assertEqual(plan.average_take_profit_price, Decimal("15.5315"))
+
+    def test_stage_take_profit_uses_cumulative_risk_and_average_entry(self) -> None:
+        plan = build_trading_plan_from_strings(
+            phases_count=3,
+            total_risk="5",
+            target_r="3",
+            commission="0.01",
+            entries="3.94,4.5,5",
+            stop_margins="0.24,0.24,0.24",
+            risk_percentages="25,35,40",
+        )
+
+        self.assertEqual([phase.shares for phase in plan.phases], [5, 7, 8])
+        self.assertEqual(plan.weighted_average_entry, Decimal("4.5600"))
+        self.assertEqual(
+            [phase.take_profit_price for phase in plan.phases],
+            [Decimal("7.6900"), Decimal("13.2667"), Decimal("19.5600")],
+        )
+        self.assertEqual(plan.average_take_profit_price, Decimal("19.5600"))
 
     def test_commission_is_added_to_each_phase_breakeven(self) -> None:
         plan = build_trading_plan_from_strings(

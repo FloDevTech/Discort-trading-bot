@@ -87,9 +87,12 @@ El resultado incluye:
 - Acciones por fase.
 - Stop price por fase.
 - Break-even acumulado por fase, incluyendo comision.
-- Take profit por fase segun el R objetivo.
 - Entrada media ponderada.
+- Take profit medio del plan: `entrada_media + (riesgo_total * r_objetivo)`.
+- Take profit por fase acumulada: `entrada_media_acumulada + (riesgo_acumulado * r_objetivo)`.
 - Acciones totales.
+
+Ejemplo: si en fase 2 el riesgo acumulado es `$3`, el objetivo es `3R` y la entrada media acumulada es `$4.2667`, el TP de esa fase es `$13.2667`.
 
 ### Scanner micro-cap
 

@@ -21,6 +21,7 @@ def format_plan_for_discord(plan: TradingPlan) -> str:
         f"🎚️ Objetivo: **{plan.target_r:f}R**",
         f"💸 Comision por accion: **{format_money(plan.commission)}**",
         f"⚖️ Entrada media: **{format_money(plan.weighted_average_entry)}**",
+        f"🏁 TP medio {plan.target_r:f}R: **{format_money(plan.average_take_profit_price)}**",
         f"📦 Acciones totales: **{plan.total_shares}**",
         "",
     ]

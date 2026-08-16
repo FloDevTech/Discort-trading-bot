@@ -1,0 +1,15 @@
+{
+  "filters": {
+    "limit": 10,
+    "max_market_cap": 150000000,
+    "max_price": 10.0,
+    "max_symbols_to_enrich": 60,
+    "min_change_percent": 0.0,
+    "min_float_rotation": 2.0,
+    "min_market_cap": 500000,
+    "min_price": 0.1,
+    "min_volume": 5000,
+    "symbols": []
+  },
+  "interval_minutes": 5.0
+}

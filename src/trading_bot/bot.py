@@ -10,7 +10,7 @@ import discord
 from discord import app_commands
 from discord.ext import tasks
 
-from trading_bot.core.scanner_config import ScannerConfig, ScannerConfigStore
+from trading_bot.core.scanner_config import ScannerConfig, ScannerConfigStore, load_env_file
 from trading_bot.core.risk import PlanValidationError, build_trading_plan_from_strings
 from trading_bot.core.stock_scanner import StockScanner
 from trading_bot.formatters import (
@@ -121,6 +121,7 @@ class TradingBot(discord.Client):
         self.scanner_config_store.save(config)
 
 
+load_env_file()
 client = TradingBot()
 
 
@@ -315,7 +316,7 @@ async def scanner_set(
 def main() -> None:
     token = os.getenv("DISCORD_TOKEN")
     if not token:
-        raise RuntimeError("Falta DISCORD_TOKEN en el entorno.")
+        raise RuntimeError("Falta DISCORD_TOKEN. Configuralo en el archivo .env.")
     client.run(token)
 
 

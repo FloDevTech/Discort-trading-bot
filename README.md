@@ -35,23 +35,23 @@ python -m pip install -r requirements.txt
 
 ## Configuracion
 
-Crea un archivo `.env` o define las variables en tu terminal. Como minimo necesitas:
+Crea o edita el archivo `.env`. El bot lo carga automaticamente al arrancar. Como minimo necesitas:
 
-```powershell
-$env:DISCORD_TOKEN="tu_token_de_discord"
+```env
+DISCORD_TOKEN=tu_token_de_discord
 ```
 
 Opcionalmente, para sincronizar los slash commands solo en un servidor de pruebas:
 
-```powershell
-$env:DISCORD_GUILD_ID="id_de_tu_servidor"
+```env
+DISCORD_GUILD_ID=id_de_tu_servidor
 ```
 
 Para activar la publicacion automatica del scanner:
 
-```powershell
-$env:DISCORD_STOCK_SCANNER_CHANNEL_ID="id_del_canal"
-$env:STOCK_SCANNER_INTERVAL_MINUTES="5"
+```env
+DISCORD_STOCK_SCANNER_CHANNEL_ID=id_del_canal
+STOCK_SCANNER_INTERVAL_MINUTES=5
 ```
 
 ## Ejecutar
@@ -141,7 +141,7 @@ $env:STOCK_SCANNER_CLEAR_LIMIT="100"
 
 Si `STOCK_SCANNER_SYMBOLS` no esta definido, el scanner intenta obtener simbolos desde el screener publico de Finviz y luego enriquece los datos de cada ticker. Yahoo Finance queda como fallback limitado para precio y volumen.
 
-Los cambios hechos desde `/scanner-set` se guardan en `scanner_config.json`.
+Los cambios hechos desde `/scanner-set` se guardan en `.env`, asi se conservan al reiniciar el bot.
 
 ## Tests
 

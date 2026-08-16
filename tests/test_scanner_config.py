@@ -9,7 +9,8 @@ from trading_bot.core.stock_scanner import ScannerFilters
 class ScannerConfigTests(TestCase):
     def test_saves_and_loads_scanner_config(self) -> None:
         with TemporaryDirectory() as directory:
-            path = Path(directory) / "scanner.json"
+            path = Path(directory) / ".env"
+            path.write_text("DISCORD_TOKEN=keep_me\n\n", encoding="utf-8")
             store = ScannerConfigStore(path)
             config = ScannerConfig(
                 filters=ScannerFilters(
@@ -27,6 +28,7 @@ class ScannerConfigTests(TestCase):
             self.assertEqual(loaded.filters.max_price, 3)
             self.assertEqual(loaded.filters.min_volume, 1_000_000)
             self.assertEqual(loaded.filters.symbols, ("DFSC", "MDXH"))
+            self.assertIn("DISCORD_TOKEN=keep_me", path.read_text(encoding="utf-8"))
 
     def test_rejects_invalid_filter_ranges(self) -> None:
         with self.assertRaisesRegex(ValueError, "min_price"):
